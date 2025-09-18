@@ -1,33 +1,121 @@
-import React from 'react'
-export default function ContactForm(){
-  const [state, setState] = React.useState({name:'', email:'', company:'', mobile:'', city:'', comments:''})
-  const [status, setStatus] = React.useState(null)
-  function handleChange(e){ setState(s=>({...s, [e.target.name]: e.target.value})) }
-  async function submit(e){
-    e.preventDefault(); setStatus('loading')
-    try{
-      const res = await fetch((import.meta.env.VITE_API_BASE || '') + '/api/contact', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(state)})
-      if(res.ok) setStatus('success')
-      else setStatus('error')
-    }catch(err){ setStatus('error') }
-  }
+import React, { useState } from "react";
+
+export default function ContactForm() {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    company: "",
+    mobile: "",
+    city: "",
+    comments: "",
+  });
+
+  const [status, setStatus] = useState("");
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setStatus("Sending...");
+
+    try {
+      const response = await fetch(
+        "https://abhi-chem-backend.onrender.com/api/contact",  // <-- Replace with your Render URL
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        }
+      );
+
+      if (response.ok) {
+        setStatus("Thank you! We’ll get back to you soon.");
+        setFormData({
+          name: "",
+          email: "",
+          company: "",
+          mobile: "",
+          city: "",
+          comments: "",
+        });
+      } else {
+        setStatus("Something went wrong. Please try again later.");
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      setStatus("Server error. Please try again later.");
+    }
+  };
+
   return (
-    <section id="contact" className="max-w-4xl mx-auto px-6 py-16">
-      <h2 className="text-2xl font-bold mb-4">Get in touch</h2>
-      <form onSubmit={submit} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <input name="name" placeholder="Your Name" required value={state.name} onChange={handleChange} className="p-3 border rounded" />
-        <input name="email" placeholder="Business email" required value={state.email} onChange={handleChange} className="p-3 border rounded" />
-        <input name="company" placeholder="Business Name" value={state.company} onChange={handleChange} className="p-3 border rounded" />
-        <input name="mobile" placeholder="Mobile" value={state.mobile} onChange={handleChange} className="p-3 border rounded" />
-        <input name="city" placeholder="City" value={state.city} onChange={handleChange} className="p-3 border rounded" />
-        <textarea name="comments" placeholder="Comments" value={state.comments} onChange={handleChange} className="p-3 border rounded sm:col-span-2" />
-        <div className="sm:col-span-2 flex gap-3 items-center">
-          <button type="submit" className="px-5 py-3 rounded bg-emerald-600 text-white">Submit</button>
-          {status==='success' && <span className="text-green-600">Thanks — we received your request!</span>}
-          {status==='error' && <span className="text-red-600">Submission failed — try again later.</span>}
-          {status==='loading' && <span className="text-gray-600">Sending...</span>}
-        </div>
-      </form>
+    <section id="contact" className="bg-gray-100 py-16">
+      <div className="max-w-4xl mx-auto px-6">
+        <h2 className="text-2xl font-bold text-emerald-800 mb-6">Contact Us</h2>
+        <form
+          onSubmit={handleSubmit}
+          className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white p-6 rounded-lg shadow"
+        >
+          <input
+            type="text"
+            name="name"
+            placeholder="Full Name"
+            value={formData.name}
+            onChange={handleChange}
+            className="p-3 border rounded"
+            required
+          />
+          <input
+            type="email"
+            name="email"
+            placeholder="Email Address"
+            value={formData.email}
+            onChange={handleChange}
+            className="p-3 border rounded"
+            required
+          />
+          <input
+            type="text"
+            name="company"
+            placeholder="Company (optional)"
+            value={formData.company}
+            onChange={handleChange}
+            className="p-3 border rounded"
+          />
+          <input
+            type="text"
+            name="mobile"
+            placeholder="Mobile Number"
+            value={formData.mobile}
+            onChange={handleChange}
+            className="p-3 border rounded"
+          />
+          <input
+            type="text"
+            name="city"
+            placeholder="City"
+            value={formData.city}
+            onChange={handleChange}
+            className="p-3 border rounded"
+          />
+          <textarea
+            name="comments"
+            placeholder="Message"
+            value={formData.comments}
+            onChange={handleChange}
+            className="p-3 border rounded md:col-span-2"
+            rows="4"
+          ></textarea>
+          <button
+            type="submit"
+            className="bg-emerald-600 text-white px-6 py-3 rounded hover:bg-emerald-700 md:col-span-2"
+          >
+            Send Message
+          </button>
+        </form>
+        {status && <p className="mt-4 text-center text-gray-700">{status}</p>}
+      </div>
     </section>
-  )
+  );
 }
