@@ -14,6 +14,8 @@ class ContactIn(BaseModel):
     city: str | None = None
     comments: str | None = None
 
+
+
 @router.post('/api/contact')
 async def receive_contact(payload: ContactIn):
     try:
