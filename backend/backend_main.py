@@ -5,3 +5,7 @@ from routers.contact import router as contact_router
 app = FastAPI(title='AbhiChem API')
 app.add_middleware(CORSMiddleware, allow_origins=['*'], allow_credentials=True, allow_methods=['*'], allow_headers=['*'])
 app.include_router(contact_router)
+
+@app.get("/")
+def root():
+    return {"message": "Abhi Chem backend is running!"}
